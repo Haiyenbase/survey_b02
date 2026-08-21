@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khảo sát trước buổi 2 · Base.vn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04030d;--bg2:#0a0818;--bg3:#100e20;
+  --border:rgba(180,160,255,0.12);--border2:rgba(180,160,255,0.22);
+  --text:#f0eeff;--text2:#9088b0;--text3:#504868;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --c02:#a78bfa;--c02b:rgba(167,139,250,0.13);--c02t:rgba(167,139,250,0.32);
+  --teal:#00c8e0;--tealb:rgba(0,200,224,0.1);
+  --warn:#f59e0b;--warnb:rgba(245,158,11,0.12);--warnt:rgba(245,158,11,0.28);
+  --danger:#f87171;
+  --star1:#e0d4ff;--star2:#b8a0ff;--star3:#7c5cff;
+}
+html{font-size:16px}
+
+/* galaxy background */
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  min-height:100vh;
+  line-height:1.6;
+  position:relative;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(120,80,255,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,180,220,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 60% 30%, rgba(180,100,255,0.10) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 65%, rgba(200,180,255,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 15%, rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 45%, rgba(180,160,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 25%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 75%, rgba(200,220,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 88%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 92% 70%, rgba(180,200,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 68% 92%, rgba(200,180,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 8%, rgba(180,200,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(2px 2px at 60% 60%, rgba(160,140,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 85%, rgba(255,255,255,0.6) 0%, transparent 100%);
+  pointer-events:none;z-index:0;
+}
+.app{max-width:620px;margin:0 auto;padding:0 24px 80px;position:relative;z-index:1}
+
+/* nav */
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:28px 0 0;margin-bottom:40px}
+.brand{font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.brand span{color:var(--c02)}
+.nav-meta{font-size:11px;font-family:var(--mono);color:var(--text3);letter-spacing:.05em}
+
+/* header */
+.survey-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:var(--mono);font-weight:500;padding:4px 11px;border-radius:20px;background:var(--c02b);color:var(--c02);letter-spacing:.07em;margin-bottom:14px;border:1px solid var(--c02t)}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--c02);animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(167,139,250,.7)}70%{box-shadow:0 0 0 7px rgba(167,139,250,0)}100%{box-shadow:0 0 0 0 rgba(167,139,250,0)}}
+h1{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
+.sub{font-size:14px;color:var(--text2);margin-bottom:32px}
+
+/* progress */
+.progress-bar{height:2px;background:var(--border);border-radius:2px;margin-bottom:32px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#7c5cff,#a78bfa,#00c8e0);border-radius:2px;transition:width .35s ease}
+
+/* question block */
+.q-block{
+  background:rgba(10,8,24,0.75);
+  border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:12px;
+  border-left:2px solid var(--c02t);
+  backdrop-filter:blur(8px);
+}
+.q-num{font-size:10px;font-family:var(--mono);color:var(--c02);letter-spacing:.08em;margin-bottom:6px}
+.q-text{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px;color:var(--text)}
+.q-hint{font-size:12px;color:var(--text3);margin-bottom:14px}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:10px;border:1px solid var(--border);cursor:pointer;background:rgba(255,255,255,0.02);transition:border-color .15s,background .15s;line-height:1.45}
+.opt:hover{border-color:var(--border2);background:rgba(167,139,250,0.06)}
+.opt input{margin-top:2px;flex-shrink:0;accent-color:var(--c02)}
+.opt-main{font-size:13px;font-weight:500;color:var(--text)}
+
+/* role grid */
+.role-grid{display:grid;gap:8px}
+.role-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;background:rgba(255,255,255,0.02);transition:all .15s}
+.role-opt:hover{border-color:var(--border2);background:rgba(167,139,250,0.06)}
+.role-opt input{accent-color:var(--c02);flex-shrink:0}
+.role-name{font-size:14px;font-weight:700;letter-spacing:-.01em;color:var(--text)}
+.role-desc{font-size:11px;color:var(--text3)}
+
+/* scale */
+.scale-row{display:flex;gap:7px}
+.scale-btn{flex:1;height:44px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--text2);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .15s}
+.scale-btn:hover{border-color:var(--c02t);color:var(--c02);background:rgba(167,139,250,0.06)}
+.scale-btn.on{background:var(--c02b);border-color:var(--c02);color:var(--c02)}
+.scale-labels{display:flex;justify-content:space-between;margin-top:6px}
+.scale-labels span{font-size:11px;color:var(--text3)}
+
+/* textarea + input */
+textarea{width:100%;min-height:82px;resize:vertical;font-size:13px;font-family:var(--font);padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,0.03);color:var(--text);line-height:1.55;outline:none;transition:border-color .15s}
+textarea:focus{border-color:var(--c02t)}
+textarea::placeholder{color:var(--text3)}
+input[type=text]{width:100%;font-size:13px;font-family:var(--font);padding:10px 13px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,0.03);color:var(--text);outline:none;transition:border-color .15s}
+input[type=text]:focus{border-color:var(--c02t)}
+input[type=text]::placeholder{color:var(--text3)}
+
+/* speaker block */
+.speaker-block{
+  background:rgba(10,8,24,0.75);
+  border:1px solid var(--warnt);
+  border-radius:14px;padding:18px 20px;margin-bottom:12px;
+  backdrop-filter:blur(8px);
+}
+.speaker-label{display:flex;align-items:center;gap:7px;font-size:11px;font-family:var(--mono);color:var(--warn);letter-spacing:.07em;margin-bottom:6px}
+.speaker-hint{font-size:12px;color:var(--text3);margin-bottom:12px}
+.suggests{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.sug-btn{text-align:left;font-size:12px;color:var(--text2);background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:7px 11px;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.sug-btn:hover{border-color:var(--border2);color:var(--text);background:rgba(167,139,250,0.06)}
+.sug-btn.picked{border-color:var(--warn);background:rgba(245,158,11,0.08);color:var(--warn)}
+
+/* error */
+.err{font-size:12px;color:var(--danger);margin-top:6px;min-height:14px}
+
+/* free text toggle */
+.free-toggle{font-size:12px;color:var(--c02);cursor:pointer;margin-top:8px;display:inline-block;text-decoration:underline;text-underline-offset:2px}
+.free-input{display:none;margin-top:8px}
+.free-input.show{display:block}
+
+/* submit */
+.submit-btn{width:100%;padding:14px;font-size:14px;font-weight:700;letter-spacing:-.01em;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#a78bfa);color:#fff;border:none;cursor:pointer;margin-top:8px;transition:opacity .15s;box-shadow:0 0 24px rgba(167,139,250,0.3)}
+.submit-btn:hover{opacity:.88}
+
+/* success */
+#success{display:none;text-align:center;padding:4rem 1rem}
+.success-icon{font-size:48px;margin-bottom:1rem}
+.success-title{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;color:var(--text)}
+.success-sub{font-size:14px;color:var(--text2);line-height:1.7}
+.results-link{display:inline-block;margin-top:20px;font-size:13px;font-family:var(--mono);color:var(--c02);border:1px solid var(--c02t);padding:8px 18px;border-radius:8px;text-decoration:none}
+.results-link:hover{background:var(--c02b)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="topnav">
+  <div class="brand">Base<span>.vn</span></div>
+  <div class="nav-meta">TRAINING SERIES 2026</div>
+</div>
+
+<div class="survey-badge"><span class="pulse"></span>SESSION 02 · PRE-SURVEY</div>
+<h1>Hiểu khách hàng</h1>
+<p class="sub">Khảo sát nhanh trước buổi training — giúp trainer điều chỉnh nội dung phù hợp với thực tế của bạn.</p>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div id="form-body">
+
+<!-- Q1 -->
+<div class="q-block">
+  <div class="q-num">Q01 · BẮT BUỘC · CHỌN NHIỀU NẾU CÓ</div>
+  <div class="q-text">Vai trò của bạn là gì?</div>
+  <div class="role-grid" id="q1" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr">
+    <label class="role-opt" onclick="setTimeout(onQ1Change,0)"><input type="checkbox" name="q1" value="SE"> <div><div class="role-name">SE</div><div class="role-desc">Sales / Solution Engineer</div></div></label>
+    <label class="role-opt" onclick="setTimeout(onQ1Change,0)"><input type="checkbox" name="q1" value="DA"> <div><div class="role-name">DA</div><div class="role-desc">Data Analyst</div></div></label>
+    <label class="role-opt" onclick="setTimeout(onQ1Change,0)"><input type="checkbox" name="q1" value="DE"> <div><div class="role-name">DE</div><div class="role-desc">Data Engineer</div></div></label>
+  </div>
+  <div class="err" id="err1"></div>
+</div>
+
+<!-- Q2 — dynamic role pain points -->
+<div class="q-block" id="role-q-block" style="display:none;border-left-color:var(--c02t)">
+  <div class="q-num" id="role-q-num">Q02 · BẮT BUỘC · CHỌN NHIỀU</div>
+  <div class="q-text" id="role-q-title"></div>
+  <div class="q-hint" id="role-q-hint">Chọn tất cả những gì đang thực sự vướng</div>
+  <div class="opts" style="margin-top:12px" id="role-q-opts"></div>
+  <span class="free-toggle" onclick="toggleFreeQ2()">+ Thêm vướng mắc khác...</span>
+  <div class="free-input" id="free-q2">
+    <textarea id="free-q2-text" placeholder="Mô tả thêm điều bạn đang vướng mà chưa có trong danh sách..." style="min-height:60px"></textarea>
+  </div>
+  <div class="err" id="err-roleq"></div>
+</div>
+
+<!-- Q3 -->
+<div class="q-block">
+  <div class="q-num">Q03</div>
+  <div class="q-text">Mức độ tiếp xúc trực tiếp với KH hiện tại?</div>
+  <div class="opts" style="margin-top:12px">
+    <label class="opt"><input type="radio" name="q3" value="daily" onchange="updateProgress()"> <div><div class="opt-main">Hàng ngày — gặp / gọi KH thường xuyên</div></div></label>
+    <label class="opt"><input type="radio" name="q3" value="weekly" onchange="updateProgress()"> <div><div class="opt-main">Vài lần / tuần</div></div></label>
+    <label class="opt"><input type="radio" name="q3" value="monthly" onchange="updateProgress()"> <div><div class="opt-main">Thỉnh thoảng — vài lần / tháng</div></div></label>
+    <label class="opt"><input type="radio" name="q3" value="rare" onchange="updateProgress()"> <div><div class="opt-main">Hiếm khi — chủ yếu qua data / hệ thống</div></div></label>
+  </div>
+</div>
+
+<!-- Q4 scale -->
+<div class="q-block">
+  <div class="q-num">Q04 · BẮT BUỘC</div>
+  <div class="q-text">Bạn tự đánh giá mức độ hiểu KH của mình?</div>
+  <div style="margin-top:14px">
+    <div class="scale-row" id="q4">
+      <button class="scale-btn" onclick="pickScale(this,'q4',1)">1</button>
+      <button class="scale-btn" onclick="pickScale(this,'q4',2)">2</button>
+      <button class="scale-btn" onclick="pickScale(this,'q4',3)">3</button>
+      <button class="scale-btn" onclick="pickScale(this,'q4',4)">4</button>
+      <button class="scale-btn" onclick="pickScale(this,'q4',5)">5</button>
+    </div>
+    <div class="scale-labels"><span>Còn mơ hồ</span><span>Tự tin, hiểu rõ</span></div>
+  </div>
+  <div class="err" id="err4"></div>
+</div>
+
+<!-- Q5 case -->
+<div class="q-block">
+  <div class="q-num">Q05 · TỰ LUẬN</div>
+  <div class="q-text">Kể 1 tình huống KH khó xử bạn đã gặp gần đây</div>
+  <div class="q-hint">Trainer dùng làm case study thực tế — có thể ẩn danh</div>
+  <textarea id="q6" placeholder="VD: KH nói muốn CRM nhưng sau demo lại hỏi về HRM, không rõ ai là người quyết định..." oninput="updateProgress()"></textarea>
+</div>
+
+<!-- Q6 takeaway -->
+<div class="q-block">
+  <div class="q-num">Q06 · CHỌN NHIỀU</div>
+  <div class="q-text">Bạn mong takeaway gì nhất từ buổi 2?</div>
+  <div class="opts" style="margin-top:12px">
+    <label class="opt"><input type="checkbox" name="q8" value="segment" onchange="updateProgress()"> <div><div class="opt-main">Cách phân loại &amp; tiếp cận KH theo segment</div></div></label>
+    <label class="opt"><input type="checkbox" name="q8" value="role" onchange="updateProgress()"> <div><div class="opt-main">Rõ hơn SE / DA / DE mỗi người làm gì với KH</div></div></label>
+    <label class="opt"><input type="checkbox" name="q8" value="data" onchange="updateProgress()"> <div><div class="opt-main">Cách dùng data để đọc tín hiệu KH</div></div></label>
+    <label class="opt"><input type="checkbox" name="q8" value="toolkit" onchange="updateProgress()"> <div><div class="opt-main">Template / toolkit áp dụng được ngay</div></div></label>
+    <label class="opt"><input type="checkbox" name="q8" value="case" onchange="updateProgress()"> <div><div class="opt-main">Thảo luận case thực tế của team</div></div></label>
+  </div>
+</div>
+
+<!-- Q7 speaker — multi select -->
+<div class="speaker-block">
+  <div class="speaker-label">&#x1F4AC; CÂU HỎI CHO DIỄN GIẢ</div>
+  <div class="q-text" style="margin-bottom:4px">Chọn câu hỏi muốn hỏi diễn giả trong buổi</div>
+  <div class="speaker-hint">Chọn nhiều — câu hỏi được vote nhiều nhất sẽ được ưu tiên trong Q&amp;A</div>
+  <div class="opts" style="margin-top:10px" id="speaker-opts">
+    <label class="opt"><input type="checkbox" name="speaker_q" value="q_mistake" onchange="updateProgress()"> <div><div class="opt-main">Sai lầm phổ biến nhất khi DA/SE tiếp cận KH lần đầu là gì?</div></div></label>
+    <label class="opt"><input type="checkbox" name="speaker_q" value="q_real" onchange="updateProgress()"> <div><div class="opt-main">Làm sao phân biệt KH thực sự quan tâm vs chỉ tìm hiểu cho vui?</div></div></label>
+    <label class="opt"><input type="checkbox" name="speaker_q" value="q_de_data" onchange="updateProgress()"> <div><div class="opt-main">DE ít tiếp xúc KH trực tiếp — làm sao hiểu KH qua data?</div></div></label>
+    <label class="opt"><input type="checkbox" name="speaker_q" value="q_sme_ent" onchange="updateProgress()"> <div><div class="opt-main">SE/DA điều chỉnh gì khi làm việc với SME vs Enterprise?</div></div></label>
+    <label class="opt"><input type="checkbox" name="speaker_q" value="q_when_da" onchange="updateProgress()"> <div><div class="opt-main">DA nên tham gia từ bước nào trong quy trình SE?</div></div></label>
+    <label class="opt"><input type="checkbox" name="speaker_q" value="q_handoff" onchange="updateProgress()"> <div><div class="opt-main">Có template handoff chuẩn nào từ SE sang DA không?</div></div></label>
+  </div>
+  <div style="margin-top:10px;font-size:11px;color:var(--text3);margin-bottom:6px">Hoặc tự đặt câu hỏi riêng:</div>
+  <textarea id="q9" placeholder="Câu hỏi khác bạn muốn hỏi diễn giả..." style="min-height:60px" oninput="updateProgress()"></textarea>
+</div>
+
+<!-- Q name -->
+<div class="q-block" style="border-left-color:var(--border)">
+  <div class="q-num">KHÔNG BẮT BUỘC</div>
+  <div class="q-text">Tên bạn</div>
+  <div class="q-hint">Để ẩn danh thì bỏ trống</div>
+  <input type="text" id="q10" placeholder="Nguyễn Văn A" oninput="updateProgress()">
+</div>
+
+<button class="submit-btn" onclick="doSubmit()">Gửi khảo sát &#x2192;</button>
+
+</div>
+
+<div id="success">
+  <div class="success-icon">&#x2728;</div>
+  <div class="success-title">Đã nhận phản hồi!</div>
+  <p class="success-sub">Cảm ơn! Trainer sẽ xem qua trước buổi.<br>Hẹn gặp tại <strong>Session 02 – Hiểu khách hàng</strong>.</p>
+  <a href="results.html" class="results-link">Xem kết quả tổng hợp &#x2192;</a>
+</div>
+
+</div>
+<script>
+var sc={};
+
+var ROLE_QUESTIONS={
+  SE:{
+    title:'Là SE, bạn đang vướng nhất ở đâu khi làm việc với KH?',
+    opts:[
+      {v:'se_qualify',  l:'Qualify đúng KH — ai thật sự có nhu cầu, ai chỉ "tìm hiểu"'},
+      {v:'se_demo',     l:'Demo thuyết phục — KH xem xong nhưng không ra quyết định'},
+      {v:'se_objection',l:'Xử lý objection giá / so sánh đối thủ'},
+      {v:'se_output',   l:'Viết output / proposal sau buổi khảo sát'},
+      {v:'se_followup', l:'Follow-up đúng thời điểm, đúng người'},
+      {v:'se_internal', l:'Phối hợp nội bộ: kéo DA/DE vào đúng lúc'}
+    ]
+  },
+  DA:{
+    title:'Là DA, bạn đang vướng nhất ở đâu khi làm việc với KH?',
+    opts:[
+      {v:'da_need',     l:'Hiểu đúng nhu cầu thật — KH nói 1 đằng, muốn 1 nẻo'},
+      {v:'da_translate',l:'Dịch yêu cầu KH sang spec kỹ thuật rõ ràng'},
+      {v:'da_trust',    l:'Tạo niềm tin với KH — họ chưa tin vào giải pháp'},
+      {v:'da_story',    l:'Kể chuyện bằng data — insight rõ nhưng không thuyết phục được'},
+      {v:'da_scope',    l:'Quản lý scope — KH liên tục thêm yêu cầu'},
+      {v:'da_handoff',  l:'Nhận handoff từ SE — thiếu context khi bắt đầu'}
+    ]
+  },
+  DE:{
+    title:'Là DE, bạn đang vướng nhất ở đâu khi liên quan đến KH?',
+    opts:[
+      {v:'de_requirement',l:'Nhận requirement không rõ — phải đoán ý DA/SE'},
+      {v:'de_change',     l:'Thay đổi yêu cầu liên tục — build xong lại sửa'},
+      {v:'de_context',    l:'Thiếu context KH — không hiểu tại sao lại cần như vậy'},
+      {v:'de_quality',    l:'Data KH có chất lượng kém — khó xử lý đúng cách'},
+      {v:'de_timeline',   l:'Timeline gấp — áp lực từ phía SE/DA chuyển xuống'},
+      {v:'de_communication',l:'Giao tiếp với non-technical stakeholder'}
+    ]
+  }
+};
+
+function getChecked(name){
+  var els=document.querySelectorAll('input[name="'+name+'"]:checked');
+  var vals=[];
+  for(var i=0;i<els.length;i++) vals.push(els[i].value);
+  return vals;
+}
+function getCheckedOne(name){
+  var el=document.querySelector('input[name="'+name+'"]:checked');
+  return el?el.value:'';
+}
+
+function toggleFreeQ2(){
+  var el=document.getElementById('free-q2');
+  if(el.className.indexOf('show')>=0){
+    el.className='free-input';
+  } else {
+    el.className='free-input show';
+    document.getElementById('free-q2-text').focus();
+  }
+}
+
+function showRoleQ(){
+  var roles=getChecked('q1');
+  var block=document.getElementById('role-q-block');
+  if(!roles.length){block.style.display='none';return;}
+
+  var ROLE_COLOR={SE:'#00c8e0',DA:'#a78bfa',DE:'#34d399'};
+  var ROLE_BG={SE:'rgba(0,200,224,0.12)',DA:'rgba(167,139,250,0.12)',DE:'rgba(52,211,153,0.12)'};
+
+  var title=roles.length===1
+    ? ROLE_QUESTIONS[roles[0]].title
+    : 'Với từng vai trò, bạn đang vướng nhất ở đâu khi làm việc với KH?';
+  document.getElementById('role-q-title').textContent=title;
+  document.getElementById('role-q-hint').textContent=
+    roles.length===1?'Chọn tất cả những gì đang thực sự vướng — hoặc thêm mục khác bên dưới'
+                    :'Mỗi nhóm tương ứng 1 vai trò — chọn theo thực tế, hoặc thêm mục khác bên dưới';
+
+  var html='';
+  for(var ri=0;ri<roles.length;ri++){
+    var r=roles[ri];
+    var rq=ROLE_QUESTIONS[r];
+    if(!rq) continue;
+    var color=ROLE_COLOR[r]||'#a78bfa';
+    var bg=ROLE_BG[r]||'rgba(167,139,250,0.12)';
+    if(roles.length>1){
+      html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;margin-top:'+(ri>0?'16px':'0')+'">'
+          +'<span style="font-size:11px;font-family:monospace;font-weight:500;padding:2px 9px;border-radius:20px;background:'+bg+';color:'+color+'">'+r+'</span>'
+          +'<div style="flex:1;height:1px;background:rgba(180,160,255,0.12)"></div>'
+          +'</div>';
+    }
+    for(var oi=0;oi<rq.opts.length;oi++){
+      var o=rq.opts[oi];
+      html+='<label class="opt" style="margin-bottom:5px">'
+           +'<input type="checkbox" name="roleq" value="'+o.v+'" onchange="updateProgress()">'
+           +' <div><div class="opt-main">'+o.l+'</div></div>'
+           +'</label>';
+    }
+  }
+  document.getElementById('role-q-opts').innerHTML=html;
+  block.style.display='block';
+  updateProgress();
+}
+
+function onQ1Change(){
+  var labels=document.querySelectorAll('.role-opt');
+  for(var i=0;i<labels.length;i++){
+    var inp=labels[i].querySelector('input[name="q1"]');
+    labels[i].style.borderColor=inp.checked?'#a78bfa':'';
+    labels[i].style.background=inp.checked?'rgba(167,139,250,0.1)':'';
+  }
+  updateProgress();
+  showRoleQ();
+}
+
+function pickScale(btn,id,v){
+  sc[id]=v;
+  var btns=document.getElementById(id).querySelectorAll('.scale-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+  btn.classList.add('on');
+  document.getElementById('err4').textContent='';
+  updateProgress();
+}
+
+function updateProgress(){
+  var filled=0,total=3;
+  if(getChecked('q1').length) filled++;
+  if(getChecked('roleq').length) filled++;
+  if(sc['q4']) filled++;
+  document.getElementById('progress').style.width=(filled/total*100)+'%';
+}
+
+function doSubmit(){
+  var ok=true;
+  var roles=getChecked('q1');
+  if(!roles.length){document.getElementById('err1').textContent='Vui lòng chọn ít nhất 1 vai trò';ok=false;}
+  else document.getElementById('err1').textContent='';
+  if(roles.length&&!getChecked('roleq').length){
+    document.getElementById('err-roleq').textContent='Chọn ít nhất 1 điểm vướng';ok=false;
+  } else if(document.getElementById('err-roleq')) document.getElementById('err-roleq').textContent='';
+  if(!sc['q4']){document.getElementById('err4').textContent='Vui lòng chọn điểm';ok=false;}
+  else document.getElementById('err4').textContent='';
+  if(!ok) return;
+
+  var freeQ2el=document.getElementById('free-q2-text');
+  var freeQ2=freeQ2el?freeQ2el.value.trim():'';
+
+  var resp={
+    ts:new Date().toLocaleString('vi-VN'),
+    name:document.getElementById('q10').value.trim()||'An danh',
+    q1:roles.join(';'),
+    roleq:getChecked('roleq').join(';'),
+    roleq_other:freeQ2,
+    q3:getCheckedOne('q3'),
+    q4:sc['q4'],
+    q6:document.getElementById('q6').value.trim(),
+    q8:getChecked('q8').join(';'),
+    speaker_q:getChecked('speaker_q').join(';'),
+    q9:document.getElementById('q9').value.trim()
+  };
+
+  var APPS_SCRIPT_URL='YOUR_APPS_SCRIPT_URL_HERE';
+
+  var submitBtn=document.querySelector('.submit-btn');
+  submitBtn.disabled=true;
+  submitBtn.textContent='Dang gui...';
+
+  function finish(){
+    var all=JSON.parse(localStorage.getItem('survey_s02')||'[]');
+    all.push(resp);
+    localStorage.setItem('survey_s02',JSON.stringify(all));
+    submitBtn.disabled=false;
+    document.getElementById('form-body').style.display='none';
+    document.getElementById('success').style.display='block';
+    document.getElementById('progress').style.width='100%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  if(APPS_SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
+    finish();
+  } else {
+    var xhr=new XMLHttpRequest();
+    xhr.open('POST',APPS_SCRIPT_URL,true);
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.onreadystatechange=function(){ if(xhr.readyState===4) finish(); };
+    xhr.onerror=function(){ finish(); };
+    xhr.send(JSON.stringify(resp));
+  }
+}
+</script>
+</body>
+</html>

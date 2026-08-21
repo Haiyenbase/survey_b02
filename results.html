@@ -452,13 +452,14 @@ function render(){
       var data=[];
       if(xhr.status===200){
         try{ data=parseCSV(xhr.responseText); }catch(e){}
-        var local=getLocal();
-        var ids={};
-        for(var i=0;i<data.length;i++) ids[data[i].ts+data[i].name]=1;
-        for(var i=0;i<local.length;i++){
-          if(!ids[local[i].ts+(local[i].name||'')]) data.push(local[i]);
+        if(data.length>0){
+          // Sheets có data → dùng Sheets làm source of truth, không merge localStorage
+          setStatus('Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN'),'#34d399');
+        } else {
+          // Sheets trống (chưa có data hoặc chưa publish) → fallback localStorage
+          data=getLocal();
+          setStatus('Sheets trống — hiển thị cache local','#f59e0b');
         }
-        setStatus('Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN'),'#34d399');
       } else {
         data=getLocal();
         setStatus('Dùng cache (lỗi kết nối)','#f59e0b');

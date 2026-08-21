@@ -444,7 +444,7 @@ function emptyState(){
 
 function render(){
   setStatus('Đang tải...');
-  if(SHEET_CSV_URL!=='https://docs.google.com/spreadsheets/d/e/2PACX-1vSk4xh4KL5HbLmrKNgv3aDsVNwOqp3tQFISOoC97Y18g3by29EVp9WaLvJ3koz_orn1XemaNHNICI66/pub?gid=0&single=true&output=csv'){
+  if(SHEET_CSV_URL!==''){
     var xhr=new XMLHttpRequest();
     xhr.open('GET',SHEET_CSV_URL+'&t='+Date.now(),true);
     xhr.onreadystatechange=function(){

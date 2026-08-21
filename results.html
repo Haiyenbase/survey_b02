@@ -120,19 +120,19 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-b
   <div class="brand">Base<span>.vn</span></div>
   <div class="nav-right">
     <span id="sync-status"></span>
-    <button class="refresh-btn" onclick="render()">&#x21BB; Refresh</button>
-    <button class="clear-btn" onclick="clearData()">Xoa cache</button>
+    <button class="refresh-btn" onclick="render()">↻ Refresh</button>
+    <button class="clear-btn" onclick="clearData()">Xóa cache</button>
   </div>
 </div>
 
-<div class="dash-badge"><span class="live-dot"></span>LIVE · SESSION 02 · HIEU KHACH HANG</div>
-<h1>Ket qua khao sat</h1>
-<p class="sub">Cap nhat real-time tu Google Sheets · Auto-refresh 30 giay</p>
+<div class="dash-badge"><span class="live-dot"></span>LIVE · SESSION 02 · HIỂU KHÁCH HÀNG</div>
+<h1>Kết quả khảo sát</h1>
+<p class="sub">Cập nhật real-time từ Google Sheets · Auto-refresh 30 giây</p>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('overview',this)">Tong quan</button>
-  <button class="tab" onclick="switchTab('details',this)">Chi tiet</button>
-  <button class="tab" onclick="switchTab('speaker',this)">Cau hoi dien gia</button>
+  <button class="tab active" onclick="switchTab('overview',this)">Tổng quan</button>
+  <button class="tab" onclick="switchTab('details',this)">Chi tiết</button>
+  <button class="tab" onclick="switchTab('speaker',this)">Câu hỏi diễn giả</button>
 </div>
 
 <div id="tab-overview"></div>
@@ -160,7 +160,7 @@ var Q8_LABEL={segment:'Phân loại KH',role:'Vai trò rõ hơn',data:'Data sign
 var SPEAKER_LABEL={
   q_mistake:'Sai lầm khi tiếp cận KH lần đầu',q_real:'Phân biệt KH thật vs tìm hiểu',
   q_de_data:'DE hiểu KH qua data',q_sme_ent:'SME vs Enterprise',
-  q_when_da:'DA tham gia từ bước nào',q_handoff:'Template handoff SE→DA'
+  q_when_da:'DA tham gia từ bước nào',q_handoff:'Template handoff SE → DA'
 };
 
 // RFC-4180 CSV parser
@@ -197,7 +197,21 @@ function parseCSV(text){
   return rows;
 }
 
-function getLocal(){return JSON.parse(localStorage.getItem('survey_s02')||'[]');}
+function getLocal(){
+  var raw=JSON.parse(localStorage.getItem('survey_s02')||'[]');
+  // Normalize: localStorage lưu q1 dạng string "SE;DA", cần convert thành array
+  return raw.map(function(r){
+    function toArr(v){ return v ? (Array.isArray(v)?v:String(v).split(';').filter(Boolean)) : []; }
+    return {
+      ts:r.ts||'',name:r.name||'An danh',
+      q1:toArr(r.q1),roleq:toArr(r.roleq),
+      roleq_other:r.roleq_other||'',
+      q3:r.q3||'',q4:parseInt(r.q4)||0,
+      q6:r.q6||'',q8:toArr(r.q8),
+      speaker_q:toArr(r.speaker_q),q9:r.q9||''
+    };
+  });
+}
 
 function setStatus(msg,color){
   var el=document.getElementById('sync-status');
@@ -209,8 +223,9 @@ function countArr(data,key){
   for(var i=0;i<data.length;i++){
     var vals=data[i][key];
     if(!vals) continue;
+    if(typeof vals==='string') vals=vals.split(';');
     for(var j=0;j<vals.length;j++){
-      var v=vals[j];if(!v)continue;
+      var v=(vals[j]||'').trim();if(!v)continue;
       m[v]=(m[v]||0)+1;
     }
   }
@@ -255,8 +270,12 @@ function renderOverview(data){
   var roleFlat={};
   for(var i=0;i<data.length;i++){
     var rl=data[i].q1;
+    // q1 có thể là array (từ Sheets CSV) hoặc string "SE;DA" (từ localStorage)
+    if(typeof rl==='string') rl=rl.split(';');
+    if(!rl||!rl.length) continue;
     for(var j=0;j<rl.length;j++){
-      var rv=rl[j];if(!rv)continue;
+      var rv=(rl[j]||'').trim();
+      if(!rv||rv.length>10) continue; // bỏ qua giá trị lạ
       roleFlat[rv]=(roleFlat[rv]||0)+1;
     }
   }
@@ -270,18 +289,18 @@ function renderOverview(data){
   var scaleColors=['#f472b6','#f59e0b','#f59e0b','#34d399','#34d399'];
 
   var html='<div class="stats-row">'
-    +'<div class="stat-card"><div class="stat-num" style="color:var(--c02)">'+n+'</div><div class="stat-label">PHAN HOI</div></div>'
-    +'<div class="stat-card"><div class="stat-num" style="color:var(--teal)">'+avgScore+'</div><div class="stat-label">DIEM TB HIEU KH</div></div>'
+    +'<div class="stat-card"><div class="stat-num" style="color:var(--c02)">'+n+'</div><div class="stat-label">PHẢN HỒI</div></div>'
+    +'<div class="stat-card"><div class="stat-num" style="color:var(--teal)">'+avgScore+'</div><div class="stat-label">ĐIỂM TB HIỂU KH</div></div>'
     +'<div class="stat-card"><div class="stat-num" style="color:var(--green)">'+Object.keys(roleFlat).length+'</div><div class="stat-label">ROLES</div></div>'
-    +'<div class="stat-card"><div class="stat-num" style="color:var(--warn)">'+data.filter(function(r){return r.q9||r.speaker_q.length}).length+'</div><div class="stat-label">CAU HOI DIEN GIA</div></div>'
+    +'<div class="stat-card"><div class="stat-num" style="color:var(--warn)">'+data.filter(function(r){return r.q9||r.speaker_q.length}).length+'</div><div class="stat-label">CÂU HỎI DIỄN GIẢ</div></div>'
     +'</div>';
 
-  html+='<div class="section"><div class="section-title">Vai tro & danh gia</div>'
+  html+='<div class="section"><div class="section-title">Vai trò & đánh giá</div>'
     +'<div class="grid2">'
-    +'<div class="chart-card"><div class="chart-title">Phan bo theo role</div>'
+    +'<div class="chart-card"><div class="chart-title">Phân bổ theo role</div>'
     +sortDesc(roleFlat).map(function(item){return bar(item[0],item[1],n,ROLE_COLOR[item[0]]||'#a78bfa');}).join('')
     +'</div>'
-    +'<div class="chart-card"><div class="chart-title">Muc do hieu KH (tu danh gia)</div>'
+    +'<div class="chart-card"><div class="chart-title">Mức độ hiểu KH (tự đánh giá)</div>'
     +'<div class="scale-vis">'
     +[1,2,3,4,5].map(function(v,i){
       return '<div class="scale-col">'
@@ -291,29 +310,29 @@ function renderOverview(data){
         +'</div>';
     }).join('')
     +'</div>'
-    +'<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">Trung binh: <span style="color:var(--c02);font-weight:600">'+avgScore+'/5</span></div>'
+    +'<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">Trung bình: <span style="color:var(--c02);font-weight:600">'+avgScore+'/5</span></div>'
     +'</div></div></div>';
 
-  html+='<div class="section"><div class="section-title">Vuong mac theo role</div>'
-    +'<div class="chart-card"><div class="chart-title">Top diem vuong</div>'
+  html+='<div class="section"><div class="section-title">Vướng mắc theo role</div>'
+    +'<div class="chart-card"><div class="chart-title">Top điểm vướng</div>'
     +sortDesc(roleq).slice(0,8).map(function(item){
       return bar(ROLEQ_LABEL[item[0]]||item[0],item[1],n,'#f472b6');
     }).join('')+'</div></div>';
 
-  html+='<div class="section"><div class="section-title">Takeaway & tiep xuc KH</div>'
+  html+='<div class="section"><div class="section-title">Takeaway & tiếp xúc KH</div>'
     +'<div class="grid2">'
-    +'<div class="chart-card"><div class="chart-title">Mong muon sau buoi 2</div>'
+    +'<div class="chart-card"><div class="chart-title">Mong muốn sau buổi 2</div>'
     +sortDesc(q8).map(function(item){return bar(Q8_LABEL[item[0]]||item[0],item[1],n,'#34d399');}).join('')
     +'</div>'
-    +'<div class="chart-card"><div class="chart-title">Muc do tiep xuc KH</div>'
+    +'<div class="chart-card"><div class="chart-title">Mức độ tiếp xúc KH</div>'
     +sortDesc(q3).map(function(item){
-      var lbl={daily:'Hang ngay',weekly:'Vai lan/tuan',monthly:'Thinh thoang',rare:'Hiem khi'};
+      var lbl={daily:'Hàng ngày',weekly:'Vài lần/tuần',monthly:'Thỉnh thoảng',rare:'Hiếm khi'};
       return bar(lbl[item[0]]||item[0],item[1],n,'#00c8e0');
     }).join('')+'</div></div></div>';
 
   if(Object.keys(speakerq).length){
-    html+='<div class="section"><div class="section-title">Cau hoi dien gia duoc vote nhieu</div>'
-      +'<div class="chart-card"><div class="chart-title">So luot chon</div>'
+    html+='<div class="section"><div class="section-title">Câu hỏi diễn giả được vote nhiều</div>'
+      +'<div class="chart-card"><div class="chart-title">Số lượt chọn</div>'
       +sortDesc(speakerq).map(function(item){return bar(SPEAKER_LABEL[item[0]]||item[0],item[1],n,'#f59e0b');}).join('')
       +'</div></div>';
   }
@@ -341,7 +360,7 @@ function renderDetails(data){
       +'</div></div>';
   }
   if(frees.length){
-    html+='<div class="section"><div class="section-title">Vuong mac tu dien them</div>'
+    html+='<div class="section"><div class="section-title">Vướng mắc tự điền thêm</div>'
       +'<div class="answers-card">'
       +frees.map(function(r){
         return '<div class="answer-item">'
@@ -351,7 +370,7 @@ function renderDetails(data){
       }).join('')
       +'</div></div>';
   }
-  html+='<div class="section"><div class="section-title">Tat ca '+data.length+' phan hoi</div>'
+  html+='<div class="section"><div class="section-title">Tất cả '+data.length+' phản hồi</div>'
     +'<div class="answers-card">'
     +data.map(function(r,i){
       var roles=r.q1;
@@ -363,7 +382,7 @@ function renderDetails(data){
         +'<span>'+r.name+'</span>'
         +'<span style="margin-left:auto;color:var(--c02)">'+r.q4+'/5</span>'
         +'<span style="margin-left:auto">'+r.ts+'</span></div>'
-        +'<div class="answer-text">Tiep xuc KH: '+(r.q3||'—')+' · Vuong: '+(r.roleq.map(function(v){return ROLEQ_LABEL[v]||v;}).join(', ')||'—')+'</div>'
+        +'<div class="answer-text">Tiếp xúc KH: '+(r.q3||'—')+' · Vướng: '+(r.roleq.map(function(v){return ROLEQ_LABEL[v]||v;}).join(', ')||'—')+'</div>'
         +'</div>';
     }).join('')
     +'</div></div>';
@@ -382,13 +401,13 @@ function renderSpeaker(data){
     if(r.q9) custom.push({name:r.name,q1:r.q1,q9:r.q9,ts:r.ts});
   }
   if(!Object.keys(votes).length&&!custom.length)
-    return '<div class="empty"><div class="empty-title">Chua co cau hoi nao</div><div class="empty-sub">Se hien thi khi co nguoi gui khao sat.</div></div>';
+    return '<div class="empty"><div class="empty-title">Chưa có câu hỏi nào</div><div class="empty-sub">Sẽ hiển thị khi có người gửi khảo sát.</div></div>';
 
   var html='';
   var sorted=sortDesc(votes);
   var maxVote=sorted.length?sorted[0][1]:1;
   if(sorted.length){
-    html+='<div class="section"><div class="section-title">Cau hoi duoc vote nhieu nhat</div>';
+    html+='<div class="section"><div class="section-title">Câu hỏi được vote nhiều nhất</div>';
     for(var i=0;i<sorted.length;i++){
       var k=sorted[i][0],v=sorted[i][1];
       html+='<div class="speaker-q">'
@@ -400,7 +419,7 @@ function renderSpeaker(data){
     html+='</div>';
   }
   if(custom.length){
-    html+='<div class="section"><div class="section-title">'+custom.length+' cau hoi tu dat</div>';
+    html+='<div class="section"><div class="section-title">'+custom.length+' câu hỏi tự đặt</div>';
     for(var i=0;i<custom.length;i++){
       var c=custom[i];
       var roles=c.q1;
@@ -418,13 +437,13 @@ function renderSpeaker(data){
 }
 
 function emptyState(){
-  return '<div class="empty"><div class="empty-title">Chua co phan hoi nao</div>'
-    +'<div class="empty-sub">Chia se link form cho team dien.<br>Trang nay tu cap nhat moi 30 giay.</div>'
-    +'<a href="index.html" class="survey-link">Mo form khao sat &#x2192;</a></div>';
+  return '<div class="empty"><div class="empty-title">Chua co phản hồi nao</div>'
+    +'<div class="empty-sub">Chia sẻ link form cho team điền.<br>Trang này tự cập nhật mỗi 30 giây.</div>'
+    +'<a href="index.html" class="survey-link">Mở form khảo sát &#x2192;</a></div>';
 }
 
 function render(){
-  setStatus('Dang tai...');
+  setStatus('Đang tải...');
   if(SHEET_CSV_URL!=='https://docs.google.com/spreadsheets/d/1G7Z0-onWiHowT08-dKpT-bl6RseVNUfp-IRX0rLhldo/edit?usp=sharing'){
     var xhr=new XMLHttpRequest();
     xhr.open('GET',SHEET_CSV_URL+'&t='+Date.now(),true);
@@ -439,17 +458,17 @@ function render(){
         for(var i=0;i<local.length;i++){
           if(!ids[local[i].ts+(local[i].name||'')]) data.push(local[i]);
         }
-        setStatus('Cap nhat luc '+new Date().toLocaleTimeString('vi-VN'),'#34d399');
+        setStatus('Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN'),'#34d399');
       } else {
         data=getLocal();
-        setStatus('Dung cache (loi ket noi)','#f59e0b');
+        setStatus('Dùng cache (lỗi kết nối)','#f59e0b');
       }
       paint(data);
     };
     xhr.send();
   } else {
     var data=getLocal();
-    setStatus('Local mode (chua cau hinh Sheets)','#f59e0b');
+    setStatus('Local mode (chưa cấu hình Sheets)','#f59e0b');
     paint(data);
   }
 }
@@ -470,7 +489,7 @@ function switchTab(id,el){
 }
 
 function clearData(){
-  if(confirm('Xoa cache localStorage? (Du lieu tren Sheets khong bi xoa)')){
+  if(confirm('Xóa cache localStorage? (Dữ liệu trên Sheets không bị xóa)')){
     localStorage.removeItem('survey_s02');render();
   }
 }

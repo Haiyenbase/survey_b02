@@ -142,7 +142,7 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-b
 </div>
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────
-var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk4xh4KL5HbLmrKNgv3aDsVNwOqp3tQFISOoC97Y18g3by29EVp9WaLvJ3koz_orn1XemaNHNICI66/pub?gid=859263950&single=true&output=csv';
+var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvmr6ZuWFwf2W6r60POe0Pk_5IgMCAxlxZDI1LGT_zMHU6Eldu3qR4a7OHncCro3AkXOiioo6Ad6Tr/pub?gid=1238390826&single=true&output=csv';
 // ─────────────────────────────────────────────────────────────────
 
 var ROLE_COLOR={SE:'#00c8e0',DA:'#a78bfa',DE:'#34d399'};
@@ -444,7 +444,7 @@ function emptyState(){
 
 function render(){
   setStatus('Đang tải...');
-if(SHEET_CSV_URL!=='https://docs.google.com/spreadsheets/d/e/2PACX-1vSk4xh4KL5HbLmrKNgv3aDsVNwOqp3tQFISOoC97Y18g3by29EVp9WaLvJ3koz_orn1XemaNHNICI66/pub?gid=859263950&single=true&output=csv'){
+if(SHEET_CSV_URL!=='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvmr6ZuWFwf2W6r60POe0Pk_5IgMCAxlxZDI1LGT_zMHU6Eldu3qR4a7OHncCro3AkXOiioo6Ad6Tr/pub?gid=1238390826&single=true&output=csv'){
   var xhr=new XMLHttpRequest();
     xhr.open('GET',SHEET_CSV_URL+'&t='+Date.now(),true);
     xhr.onreadystatechange=function(){
